@@ -1,9 +1,0 @@
-C:\Users\Nihal Talur\Documents\GitLab\NetBitz\NetBitz\NetBitz\bin\Debug\NetBitz.dll
-C:\Users\Nihal Talur\Documents\GitLab\NetBitz\NetBitz\NetBitz\bin\Debug\NetBitz.pdb
-C:\Users\Nihal Talur\Documents\GitLab\NetBitz\NetBitz\NetBitz\bin\Debug\LibPowerCrypt4.dll
-C:\Users\Nihal Talur\Documents\GitLab\NetBitz\NetBitz\NetBitz\obj\Debug\NetBitz.csprojResolveAssemblyReference.cache
-C:\Users\Nihal Talur\Documents\GitLab\NetBitz\NetBitz\NetBitz\obj\Debug\NetBitz.dll
-C:\Users\Nihal Talur\Documents\GitLab\NetBitz\NetBitz\NetBitz\obj\Debug\NetBitz.pdb
-C:\Users\Nihal Talur\Documents\GitLab\NetBitz\NetBitz\NetBitz\bin\Debug\dnlib.dll
-C:\Users\Nihal Talur\Documents\GitLab\NetBitz\NetBitz\NetBitz\bin\Debug\dnlib.pdb
-C:\Users\Nihal Talur\Documents\GitLab\NetBitz\NetBitz\NetBitz\bin\Debug\dnlib.xml
