@@ -15,13 +15,23 @@ namespace NetBitz
 		string namespaceName = "NBytzCore";
 		public void CreateStubModule(string fileName, string message, string key)
 		{
+			/*
 			ModuleDef mod = new ModuleDefUser(fileName)
 			{
 				Kind = ModuleKind.Console
 			};
-			ModuleDefMD libpcMod = ModuleDefMD.Load("LibPowerCrypt4.dll");
+			*/
+			/*
+			ModuleDef libpcMod = ModuleDefMD.Load("LibPowerCrypt4.dll");
+			libpcMod.Kind = ModuleKind.Console;
 			AssemblyDef asm = new AssemblyDefUser(assemblyName, new Version(1, 2, 3, 4));
-			asm.Modules.Add(mod);
+			
+			asm.Modules.Add(libpcMod);
+			*/
+			AssemblyDef libpowercryptDll = AssemblyDef.Load("LibPowerCrypt4.dll"); //Load powercrypt
+			ModuleDef libpcMod = libpowercryptDll.Modules[0];
+			libpcMod.Kind = ModuleKind.Console; //convert to EXE
+			Importer importer = new Importer(libpcMod);
 			
 			
 			/*
@@ -33,15 +43,15 @@ namespace NetBitz
 			*/
 
 			// Add the startup type. It derives from System.Object.
-			TypeDef startUpType = new TypeDefUser(namespaceName, "Startup", mod.CorLibTypes.Object.TypeDefOrRef);
+			TypeDef startUpType = new TypeDefUser(namespaceName, "Startup", libpcMod.CorLibTypes.Object.TypeDefOrRef);
 			startUpType.Attributes = TypeAttributes.NotPublic | TypeAttributes.AutoLayout |
 									TypeAttributes.Class | TypeAttributes.AnsiClass;
 			// Add the type to the module
-			mod.Types.Add(startUpType);
+			libpcMod.Types.Add(startUpType);
 
 			// Create the entry point method
 			MethodDef entryPoint = new MethodDefUser("Main",
-				MethodSig.CreateStatic(mod.CorLibTypes.Int32, new SZArraySig(mod.CorLibTypes.String)));
+				MethodSig.CreateStatic(libpcMod.CorLibTypes.Int32, new SZArraySig(libpcMod.CorLibTypes.String)));
 			entryPoint.Attributes = MethodAttributes.Private | MethodAttributes.Static |
 							MethodAttributes.HideBySig | MethodAttributes.ReuseSlot;
 			entryPoint.ImplAttributes = MethodImplAttributes.IL | MethodImplAttributes.Managed;
@@ -50,25 +60,38 @@ namespace NetBitz
 			// Add the method to the startup type
 			startUpType.Methods.Add(entryPoint);
 			// Set module entry point
-			mod.EntryPoint = entryPoint;
+			libpcMod.EntryPoint = entryPoint;
 
 			// Create a TypeRef to System.Console
-			TypeRef consoleRef = new TypeRefUser(mod, "System", "Console", mod.CorLibTypes.AssemblyRef);
+			TypeRef consoleRef = new TypeRefUser(libpcMod, "System", "Console", libpcMod.CorLibTypes.AssemblyRef);
 			// Create a method ref to 'System.Void System.Console::WriteLine(System.String)'
-			MemberRef consoleWrite1 = new MemberRefUser(mod, "WriteLine",
-						MethodSig.CreateStatic(mod.CorLibTypes.Void, mod.CorLibTypes.String),
+			MemberRef consoleWrite1 = new MemberRefUser(libpcMod, "WriteLine",
+						MethodSig.CreateStatic(libpcMod.CorLibTypes.Void, libpcMod.CorLibTypes.String),
 						consoleRef);
+			
+			AssemblyRef powerAESLibRef = libpowercryptDll.ToAssemblyRef();
+			
+			TypeRef powerAESRef = new TypeRefUser(libpcMod, "OmniBean.PowerCrypt4", "PowerAES",
+                         powerAESLibRef);
+			
+			MemberRef decryptRef = new MemberRefUser(libpcMod, "Decrypt", 
+                         MethodSig.CreateStatic(libpcMod.CorLibTypes.String, libpcMod.CorLibTypes.String, libpcMod.CorLibTypes.String)
+                        ,powerAESRef);
 
 			// Add a CIL method body to the entry point method
 			CilBody epBody = new CilBody();
 			entryPoint.Body = epBody;
 			epBody.Instructions.Add(OpCodes.Ldstr.ToInstruction(PowerAES.Encrypt(message, key)));
+			
+			epBody.Instructions.Add(OpCodes.Ldstr.ToInstruction(key));
+			epBody.Instructions.Add(OpCodes.Call.ToInstruction(decryptRef));
+			
 			epBody.Instructions.Add(OpCodes.Call.ToInstruction(consoleWrite1));
 			epBody.Instructions.Add(OpCodes.Ldc_I4_0.ToInstruction());
-			epBody.Instructions.Add(OpCodes.Ret.ToInstruction());
+			epBody.Instructions.Add(OpCodes.Ret.ToInstruction()); //Return/End
 
 			// Save the assembly to a file on disk
-			mod.Write(fileName);
+			libpcMod.Write(fileName);
 		}
 	}
 }
