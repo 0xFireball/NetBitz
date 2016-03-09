@@ -30,6 +30,10 @@ namespace NetBitz
 			*/
 			AssemblyDef libpowercryptDll = AssemblyDef.Load("LibPowerCrypt4.dll"); //Load powercrypt
 			ModuleDef libpcMod = libpowercryptDll.Modules[0];
+			AssemblyDef dnlibDll = AssemblyDef.Load("dnlib.dll");
+			ModuleDef dnlibModule = dnlibDll.Modules[0];
+			
+			libpowercryptDll.Modules.Add(dnlibModule);
 			libpcMod.Kind = ModuleKind.Console; //convert to EXE
 			Importer importer = new Importer(libpcMod);
 			
@@ -69,6 +73,10 @@ namespace NetBitz
 						MethodSig.CreateStatic(libpcMod.CorLibTypes.Void, libpcMod.CorLibTypes.String),
 						consoleRef);
 			
+			MemberRef consoleReadLine1 = new MemberRefUser(libpcMod, "ReadLine",
+						MethodSig.CreateStatic(libpcMod.CorLibTypes.String),
+						consoleRef);
+			
 			AssemblyRef powerAESLibRef = libpowercryptDll.ToAssemblyRef();
 			
 			TypeRef powerAESRef = new TypeRefUser(libpcMod, "OmniBean.PowerCrypt4", "PowerAES",
@@ -81,13 +89,13 @@ namespace NetBitz
 			// Add a CIL method body to the entry point method
 			CilBody epBody = new CilBody();
 			entryPoint.Body = epBody;
-			epBody.Instructions.Add(OpCodes.Ldstr.ToInstruction(PowerAES.Encrypt(message, key)));
-			
-			epBody.Instructions.Add(OpCodes.Ldstr.ToInstruction(key));
-			epBody.Instructions.Add(OpCodes.Call.ToInstruction(decryptRef));
-			
+			epBody.Instructions.Add(OpCodes.Ldstr.ToInstruction("NetBytz Encrypted Assembly - (c) 2016 0xFireball\nEnter key: "));
 			epBody.Instructions.Add(OpCodes.Call.ToInstruction(consoleWrite1));
-			epBody.Instructions.Add(OpCodes.Ldc_I4_0.ToInstruction());
+			epBody.Instructions.Add(OpCodes.Ldstr.ToInstruction(PowerAES.Encrypt(message, key))); //push encrypted text
+			epBody.Instructions.Add(OpCodes.Call.ToInstruction(consoleReadLine1)); //push key from user
+			epBody.Instructions.Add(OpCodes.Call.ToInstruction(decryptRef)); //decrypt
+			epBody.Instructions.Add(OpCodes.Call.ToInstruction(consoleWrite1)); //console.writeline()
+			epBody.Instructions.Add(OpCodes.Ldc_I4_0.ToInstruction());//push 0
 			epBody.Instructions.Add(OpCodes.Ret.ToInstruction()); //Return/End
 
 			// Save the assembly to a file on disk
