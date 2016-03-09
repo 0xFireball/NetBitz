@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnlib", "dnlib\src\dnlib.cs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NBytzCube", "NBytzCube\NBytzCube.csproj", "{13A3D081-BE6B-4A15-BB1C-7F651320ED15}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetBitz.GUI", "CryptoLoaderGUI\NetBitz.GUI.csproj", "{B3239CF0-DC02-40BF-B070-3B939E672A51}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,5 +36,9 @@ Global
 		{13A3D081-BE6B-4A15-BB1C-7F651320ED15}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13A3D081-BE6B-4A15-BB1C-7F651320ED15}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{13A3D081-BE6B-4A15-BB1C-7F651320ED15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3239CF0-DC02-40BF-B070-3B939E672A51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3239CF0-DC02-40BF-B070-3B939E672A51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3239CF0-DC02-40BF-B070-3B939E672A51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3239CF0-DC02-40BF-B070-3B939E672A51}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
