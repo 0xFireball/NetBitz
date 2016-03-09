@@ -13,30 +13,22 @@ namespace NetBitz
 	{
 		string assemblyName = "ZBytzX";
 		string namespaceName = "NBytzCore";
-		public void CreateStubModule(string fileName, string message, string key)
+		public void CreateStubModule(string fileName, string message, string key, string sfxOutputFileName)
 		{
-			/*
-			ModuleDef mod = new ModuleDefUser(fileName)
+			/*			
+			ModuleDef zBytzXOutput = new ModuleDefUser()
 			{
-				Kind = ModuleKind.Console
+				Kind = ModuleKind.Console,
 			};
-			*/
-			/*
-			ModuleDef libpcMod = ModuleDefMD.Load("LibPowerCrypt4.dll");
-			libpcMod.Kind = ModuleKind.Console;
-			AssemblyDef asm = new AssemblyDefUser(assemblyName, new Version(1, 2, 3, 4));
-			
-			asm.Modules.Add(libpcMod);
+			AssemblyDef zBytzExe = new AssemblyDefUser(assemblyName, new Version(0,0,0,0));
+			zBytzExe.Modules.Add();
 			*/
 			AssemblyDef libpowercryptDll = AssemblyDef.Load("LibPowerCrypt4.dll"); //Load powercrypt
 			ModuleDef libpcMod = libpowercryptDll.Modules[0];
-			AssemblyDef dnlibDll = AssemblyDef.Load("dnlib.dll");
-			ModuleDef dnlibModule = dnlibDll.Modules[0];
-			
-			libpowercryptDll.Modules.Add(dnlibModule);
 			libpcMod.Kind = ModuleKind.Console; //convert to EXE
+			//AssemblyDef dnlibDll = AssemblyDef.Load("dnlib.dll");
+			//ModuleDef dnlibModule = dnlibDll.Modules[0];
 			Importer importer = new Importer(libpcMod);
-			
 			
 			/*
 			// Add a .NET resource
@@ -66,6 +58,7 @@ namespace NetBitz
 			// Set module entry point
 			libpcMod.EntryPoint = entryPoint;
 
+			#region TypeRefs
 			// Create a TypeRef to System.Console
 			TypeRef consoleRef = new TypeRefUser(libpcMod, "System", "Console", libpcMod.CorLibTypes.AssemblyRef);
 			// Create a method ref to 'System.Void System.Console::WriteLine(System.String)'
@@ -85,19 +78,31 @@ namespace NetBitz
 			MemberRef decryptRef = new MemberRefUser(libpcMod, "Decrypt", 
                          MethodSig.CreateStatic(libpcMod.CorLibTypes.String, libpcMod.CorLibTypes.String, libpcMod.CorLibTypes.String)
                         ,powerAESRef);
-
+			
+			ITypeDefOrRef byteArrayRef = importer.Import(typeof(System.Byte[]));
+			
+			TypeRef fileRef = new TypeRefUser(libpcMod, "System.IO", "File",
+                         libpcMod.CorLibTypes.AssemblyRef);
+			
+			MemberRef writeBytesRef = new MemberRefUser(libpcMod, "WriteAllBytes", 
+                        MethodSig.CreateStatic(libpcMod.CorLibTypes.Void, libpcMod.CorLibTypes.String, byteArrayRef.ToTypeSig()),
+                        fileRef);
+			#endregion
+			
 			// Add a CIL method body to the entry point method
 			CilBody epBody = new CilBody();
 			entryPoint.Body = epBody;
-			epBody.Instructions.Add(OpCodes.Ldstr.ToInstruction("NetBytz Encrypted Assembly - (c) 2016 0xFireball\nEnter key: "));
+			epBody.Instructions.Add(OpCodes.Ldstr.ToInstruction("NetBytz Encrypted SFX - (c) 2016 0xFireball\nEnter key: "));
 			epBody.Instructions.Add(OpCodes.Call.ToInstruction(consoleWrite1));
+			epBody.Instructions.Add(OpCodes.Ldstr.ToInstruction(sfxOutputFileName));
 			epBody.Instructions.Add(OpCodes.Ldstr.ToInstruction(PowerAES.Encrypt(message, key))); //push encrypted text
 			epBody.Instructions.Add(OpCodes.Call.ToInstruction(consoleReadLine1)); //push key from user
 			epBody.Instructions.Add(OpCodes.Call.ToInstruction(decryptRef)); //decrypt
+			epBody.Instructions.Add(OpCodes.Call.ToInstruction(writeBytesRef)); //writeAllBytes
+			epBody.Instructions.Add(OpCodes.Ldstr.ToInstruction("Contents Dumped to: "+sfxOutputFileName));
 			epBody.Instructions.Add(OpCodes.Call.ToInstruction(consoleWrite1)); //console.writeline()
 			epBody.Instructions.Add(OpCodes.Ldc_I4_0.ToInstruction());//push 0
-			epBody.Instructions.Add(OpCodes.Ret.ToInstruction()); //Return/End
-
+			epBody.Instructions.Add(OpCodes.Ret.ToInstruction()); //Return/End			
 			// Save the assembly to a file on disk
 			libpcMod.Write(fileName);
 		}

@@ -7,7 +7,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <OutputType>Exe</OutputType>
     <RootNamespace>NetBitz</RootNamespace>
-    <AssemblyName>NetBitz</AssemblyName>
+    <AssemblyName>NetBitz.Lite</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
   </PropertyGroup>
@@ -32,6 +32,9 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LibPowerCrypt4">
+      <HintPath>packages\PowerCrypt4.4.1.0\lib\LibPowerCrypt4.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
@@ -54,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="NetBitz\NetBitz.Core.csproj">
