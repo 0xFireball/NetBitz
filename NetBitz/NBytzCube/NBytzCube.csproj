@@ -58,6 +58,7 @@
     <Compile Include="RSAProvider.cs" />
     <Compile Include="RSAProviderParameters.cs" />
     <Compile Include="RSAProviderUtils.cs" />
+    <Compile Include="StringCompressor.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

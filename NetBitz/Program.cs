@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.IO;
 using NetBitz;
 using OmniBean.PowerCrypt4.Utilities;
 
@@ -11,12 +12,16 @@ namespace NetBitz
 		{
 			Console.WriteLine("NetBitz Lite - (c) 2016 0xFireball");
 			var f = new AssemblyFactory();
-			if (args.Length!=3)
+			if (args.Length!=2)
 			{
-				Console.WriteLine("Invalid arguments!\nUsage: \n   NetBitz.Lite.exe <SFX output file name> <input file name> <encryption key>");
+				Console.WriteLine("Invalid arguments!\nUsage: \n   NetBitz.Lite.exe <SFX output file name> <input file name>");
 				return;
 			}
-			f.CreateStubModule(args[0], System.IO.File.ReadAllBytes(args[1]).GetString(), args[2]);
+			MemoryStream ms = f.CreateSFXModule(System.IO.File.ReadAllBytes(args[1]).GetString(), args[1]);
+			using (var fs = File.Create(args[0]))
+        	{
+            	ms.WriteTo(fs);
+        	}
 		}
 	}
 }
