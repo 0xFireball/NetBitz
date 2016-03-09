@@ -6,9 +6,9 @@ VisualStudioVersion = 12.0.20827.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetBitz.Core", "NetBitz\NetBitz.Core.csproj", "{6F690042-AE08-44CE-B96F-832BA8D81428}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnlib", "..\dnlib\src\dnlib.csproj", "{FDFC1237-143F-4919-8318-4926901F4639}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetBitz", "NetBitz.csproj", "{A54C7789-93BA-47CB-B5BA-D0DD74B97D40}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnlib", "dnlib\src\dnlib.csproj", "{FDFC1237-143F-4919-8318-4926901F4639}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,13 +20,13 @@ Global
 		{6F690042-AE08-44CE-B96F-832BA8D81428}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F690042-AE08-44CE-B96F-832BA8D81428}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F690042-AE08-44CE-B96F-832BA8D81428}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FDFC1237-143F-4919-8318-4926901F4639}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FDFC1237-143F-4919-8318-4926901F4639}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FDFC1237-143F-4919-8318-4926901F4639}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FDFC1237-143F-4919-8318-4926901F4639}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A54C7789-93BA-47CB-B5BA-D0DD74B97D40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A54C7789-93BA-47CB-B5BA-D0DD74B97D40}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A54C7789-93BA-47CB-B5BA-D0DD74B97D40}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A54C7789-93BA-47CB-B5BA-D0DD74B97D40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDFC1237-143F-4919-8318-4926901F4639}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDFC1237-143F-4919-8318-4926901F4639}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDFC1237-143F-4919-8318-4926901F4639}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDFC1237-143F-4919-8318-4926901F4639}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
