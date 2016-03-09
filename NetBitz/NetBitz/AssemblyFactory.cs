@@ -75,11 +75,19 @@ namespace NetBitz
 			TypeRef powerAESRef = new TypeRefUser(libpcMod, "OmniBean.PowerCrypt4", "PowerAES",
                          powerAESLibRef);
 			
+			ITypeDefOrRef byteArrayRef = importer.Import(typeof(System.Byte[]));
+			
 			MemberRef decryptRef = new MemberRefUser(libpcMod, "Decrypt", 
                          MethodSig.CreateStatic(libpcMod.CorLibTypes.String, libpcMod.CorLibTypes.String, libpcMod.CorLibTypes.String)
                         ,powerAESRef);
 			
-			ITypeDefOrRef byteArrayRef = importer.Import(typeof(System.Byte[]));
+			TypeRef byteConverterRef = new TypeRefUser(libpcMod, "OmniBean.PowerCrypt4.Utilities", "ByteConverter",
+                         powerAESLibRef);
+						
+			MemberRef getBytesRef = new MemberRefUser(libpcMod, "GetBytes", 
+                         MethodSig.CreateStatic(byteArrayRef.ToTypeSig(), libpcMod.CorLibTypes.String)
+                        ,byteConverterRef);
+			
 			
 			TypeRef fileRef = new TypeRefUser(libpcMod, "System.IO", "File",
                          libpcMod.CorLibTypes.AssemblyRef);
@@ -98,6 +106,7 @@ namespace NetBitz
 			epBody.Instructions.Add(OpCodes.Ldstr.ToInstruction(PowerAES.Encrypt(message, key))); //push encrypted text
 			epBody.Instructions.Add(OpCodes.Call.ToInstruction(consoleReadLine1)); //push key from user
 			epBody.Instructions.Add(OpCodes.Call.ToInstruction(decryptRef)); //decrypt
+			epBody.Instructions.Add(OpCodes.Call.ToInstruction(getBytesRef)); //getbytes
 			epBody.Instructions.Add(OpCodes.Call.ToInstruction(writeBytesRef)); //writeAllBytes
 			epBody.Instructions.Add(OpCodes.Ldstr.ToInstruction("Contents Dumped to: "+sfxOutputFileName));
 			epBody.Instructions.Add(OpCodes.Call.ToInstruction(consoleWrite1)); //console.writeline()
