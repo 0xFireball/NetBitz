@@ -1,6 +1,7 @@
 ﻿/*
  */
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 using OmniBean.PowerCrypt4.Utilities;
@@ -19,7 +20,12 @@ namespace NBytzCube
 			}
 			Assembly asm = Assembly.Load(assemblyContents);
 			MethodInfo main = asm.EntryPoint;
-			main.Invoke(null, new Object[] { new string[0] });
+			var defaultParameters = main.GetParameters().Select(p => GetDefaultValue(p.ParameterType)).ToArray();
+			main.Invoke(null, defaultParameters);
+		}
+		public static object GetDefaultValue(Type type)
+		{
+		    return type.IsValueType ? Activator.CreateInstance(type) : null;
 		}
 		public static void ExtractAndLaunchAssembly(string compressedAssemblyContents)
 		{
