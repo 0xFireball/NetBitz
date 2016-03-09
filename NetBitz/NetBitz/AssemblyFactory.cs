@@ -7,13 +7,22 @@ using dnlib;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using OmniBean.PowerCrypt4;
+using NetBitz.SFXModuleGen;
+using System.Linq;
 
 namespace NetBitz
 {
+	public class InvalidAssemblySetException : Exception
+	{
+		public InvalidAssemblySetException() : base() {}
+		public InvalidAssemblySetException(string message) : base(message) {}		
+	}
 	public class AssemblyFactory
 	{
 		string assemblyName = "ZBytzX";
 		string namespaceName = "NBytzCore";
+		
+		[Obsolete("OldEncryptSFX is deprecated, use one of the newer methods.", true)]
 		public void OldEncryptSFX(string fileName, string message, string key)
 		{
 			var cube = new NBytzCube.NBCube(); //Dummy to import assembly
@@ -202,6 +211,12 @@ namespace NetBitz
 			var ms = new MemoryStream();
 			nbCubeMod.Write(ms);
 			return ms;
+		}
+		
+		public MemoryStream CreateSFXModuleEx(List<string> assemblyNames)
+		{
+			List<ModuleDefMD> modules = assemblyNames.Select(asmName => ModuleDefMD.Load(asmName)).ToList();
+			return MultiSFXModuleBuilder.CreateSFXModuleEx(modules.Zip(assemblyNames, (k, v) => new { k, v }).ToDictionary(x => x.k, x => x.v));
 		}
 		
 		static string CompressString(string theString)

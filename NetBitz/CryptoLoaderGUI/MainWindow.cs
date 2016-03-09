@@ -19,7 +19,7 @@ namespace NetBitz
 {
     public partial class MainWindow : MetroForm
     {
-        string encFile;
+    	List<string> encFiles = new List<string>();
         string key;
         public MainWindow()
         {
@@ -39,13 +39,8 @@ namespace NetBitz
 
         private void listBox1_DragDrop(object sender, DragEventArgs e)
         {
-            encFile = ((string[])e.Data.GetData(DataFormats.FileDrop))[0];
-            UpdateBox();
-        }
-        void UpdateBox()
-        {
-            listBox1.Items.Clear();
-            listBox1.Items.Add(Path.GetFileName(encFile));
+            encFiles.AddRange((string[])e.Data.GetData(DataFormats.FileDrop));
+            RefreshList();
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -77,7 +72,7 @@ namespace NetBitz
             {
             	fn = sfd.FileName;
             }
-        	if (String.IsNullOrWhiteSpace(encFile))
+        	if (encFiles.Count == 0)
         	{
         		MessageBox.Show("Please select an input file.");
         		return;
@@ -86,7 +81,7 @@ namespace NetBitz
 	            SetStatus("NetBitz v1.0.4");
 	            SetStatus("Generating application...");
 	            var f = new AssemblyFactory();
-	            MemoryStream ms = f.CreateSFXModule(File.ReadAllBytes(encFile).GetString(), encFile);
+	            MemoryStream ms = f.CreateSFXModuleEx(encFiles);
 	            SetStatus("Generation completed.");
 	            using (var fs = File.Create(sfd.FileName))
 	        	{
@@ -102,6 +97,44 @@ namespace NetBitz
 		void Button2Click(object sender, EventArgs e)
 		{
 			textBox1.Text = PowerAES.GenerateRandomString(32);
+		}
+		void MainWindowLoad(object sender, EventArgs e)
+		{
+	
+		}
+		void ListBox1Click(object sender, EventArgs e)
+		{
+			OpenFileDialog ofd = new OpenFileDialog()
+			{
+				Multiselect = true,
+				Title = "Add Files",
+            	Filter = ".NET Assemblies (*.exe,*.dll)|*.exe;*.dll",
+			};
+            var dr = ofd.ShowDialog();
+            if (dr==DialogResult.OK)
+            {
+                foreach (string fileName in ofd.FileNames)
+                {
+                    encFiles.Add(fileName);
+                }
+            }
+            RefreshList();
+		}
+		void RefreshList()
+        {
+            listBox1.Items.Clear();
+            if (encFiles==null)
+            	encFiles = new List<string>();
+            foreach (string fn in encFiles)
+            {
+                string it = Path.GetFileName(fn);
+                listBox1.Items.Add(it);
+                //comboBox1.Items.Add(it);
+            }
+        }
+		void ComboBox1SelectedIndexChanged(object sender, EventArgs e)
+		{
+	
 		}
     }
 }
