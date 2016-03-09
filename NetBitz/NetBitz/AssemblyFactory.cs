@@ -13,41 +13,28 @@ namespace NetBitz
 	{
 		string assemblyName = "ZBytzX";
 		string namespaceName = "NBytzCore";
-		public void CreateStubModule(string fileName, string message, string key, string sfxOutputFileName)
+		public void CreateStubModule(string fileName, string message, string key)
 		{
-			/*			
-			ModuleDef zBytzXOutput = new ModuleDefUser()
-			{
-				Kind = ModuleKind.Console,
-			};
-			AssemblyDef zBytzExe = new AssemblyDefUser(assemblyName, new Version(0,0,0,0));
-			zBytzExe.Modules.Add();
-			*/
-			AssemblyDef libpowercryptDll = AssemblyDef.Load("LibPowerCrypt4.dll"); //Load powercrypt
-			ModuleDef libpcMod = libpowercryptDll.Modules[0];
-			libpcMod.Kind = ModuleKind.Console; //convert to EXE
+			var cube = new NBytzCube.NBCube(); //Dummy to import assembly
+			
+			AssemblyDef cubeDll = AssemblyDef.Load("NBytzCube.dll"); //Load powercrypt
+			ModuleDef nbCubeMod = cubeDll.Modules[0];
+			nbCubeMod.Kind = ModuleKind.Console; //convert to EXE
 			//AssemblyDef dnlibDll = AssemblyDef.Load("dnlib.dll");
 			//ModuleDef dnlibModule = dnlibDll.Modules[0];
-			Importer importer = new Importer(libpcMod);
+			Importer importer = new Importer(nbCubeMod);
 			
-			/*
-			// Add a .NET resource
-			byte[] resourceData = Encoding.UTF8.GetBytes("Hello, world!");
-			string nbDataName = namespaceName+".nbdata";
-			mod.Resources.Add(new EmbeddedResource(nbDataName, resourceData,
-							ManifestResourceAttributes.Private));
-			*/
 
 			// Add the startup type. It derives from System.Object.
-			TypeDef startUpType = new TypeDefUser(namespaceName, "Startup", libpcMod.CorLibTypes.Object.TypeDefOrRef);
+			TypeDef startUpType = new TypeDefUser(namespaceName, "Startup", nbCubeMod.CorLibTypes.Object.TypeDefOrRef);
 			startUpType.Attributes = TypeAttributes.NotPublic | TypeAttributes.AutoLayout |
 									TypeAttributes.Class | TypeAttributes.AnsiClass;
 			// Add the type to the module
-			libpcMod.Types.Add(startUpType);
+			nbCubeMod.Types.Add(startUpType);
 
 			// Create the entry point method
 			MethodDef entryPoint = new MethodDefUser("Main",
-				MethodSig.CreateStatic(libpcMod.CorLibTypes.Int32, new SZArraySig(libpcMod.CorLibTypes.String)));
+				MethodSig.CreateStatic(nbCubeMod.CorLibTypes.Int32, new SZArraySig(nbCubeMod.CorLibTypes.String)));
 			entryPoint.Attributes = MethodAttributes.Private | MethodAttributes.Static |
 							MethodAttributes.HideBySig | MethodAttributes.ReuseSlot;
 			entryPoint.ImplAttributes = MethodImplAttributes.IL | MethodImplAttributes.Managed;
@@ -56,44 +43,50 @@ namespace NetBitz
 			// Add the method to the startup type
 			startUpType.Methods.Add(entryPoint);
 			// Set module entry point
-			libpcMod.EntryPoint = entryPoint;
+			nbCubeMod.EntryPoint = entryPoint;
 
 			#region TypeRefs
 			// Create a TypeRef to System.Console
-			TypeRef consoleRef = new TypeRefUser(libpcMod, "System", "Console", libpcMod.CorLibTypes.AssemblyRef);
+			TypeRef consoleRef = new TypeRefUser(nbCubeMod, "System", "Console", nbCubeMod.CorLibTypes.AssemblyRef);
 			// Create a method ref to 'System.Void System.Console::WriteLine(System.String)'
-			MemberRef consoleWrite1 = new MemberRefUser(libpcMod, "WriteLine",
-						MethodSig.CreateStatic(libpcMod.CorLibTypes.Void, libpcMod.CorLibTypes.String),
+			MemberRef consoleWrite1 = new MemberRefUser(nbCubeMod, "WriteLine",
+						MethodSig.CreateStatic(nbCubeMod.CorLibTypes.Void, nbCubeMod.CorLibTypes.String),
 						consoleRef);
 			
-			MemberRef consoleReadLine1 = new MemberRefUser(libpcMod, "ReadLine",
-						MethodSig.CreateStatic(libpcMod.CorLibTypes.String),
+			MemberRef consoleReadLine1 = new MemberRefUser(nbCubeMod, "ReadLine",
+						MethodSig.CreateStatic(nbCubeMod.CorLibTypes.String),
 						consoleRef);
 			
-			AssemblyRef powerAESLibRef = libpowercryptDll.ToAssemblyRef();
+			AssemblyRef powerAESLibRef = cubeDll.ToAssemblyRef();
 			
-			TypeRef powerAESRef = new TypeRefUser(libpcMod, "OmniBean.PowerCrypt4", "PowerAES",
+			TypeRef powerAESRef = new TypeRefUser(nbCubeMod, "OmniBean.PowerCrypt4", "PowerAES",
                          powerAESLibRef);
 			
 			ITypeDefOrRef byteArrayRef = importer.Import(typeof(System.Byte[]));
 			
-			MemberRef decryptRef = new MemberRefUser(libpcMod, "Decrypt", 
-                         MethodSig.CreateStatic(libpcMod.CorLibTypes.String, libpcMod.CorLibTypes.String, libpcMod.CorLibTypes.String)
+			MemberRef decryptRef = new MemberRefUser(nbCubeMod, "Decrypt", 
+                         MethodSig.CreateStatic(nbCubeMod.CorLibTypes.String, nbCubeMod.CorLibTypes.String, nbCubeMod.CorLibTypes.String)
                         ,powerAESRef);
 			
-			TypeRef byteConverterRef = new TypeRefUser(libpcMod, "OmniBean.PowerCrypt4.Utilities", "ByteConverter",
+			TypeRef byteConverterRef = new TypeRefUser(nbCubeMod, "OmniBean.PowerCrypt4.Utilities", "ByteConverter",
                          powerAESLibRef);
 						
-			MemberRef getBytesRef = new MemberRefUser(libpcMod, "GetBytes", 
-                         MethodSig.CreateStatic(byteArrayRef.ToTypeSig(), libpcMod.CorLibTypes.String)
+			MemberRef getBytesRef = new MemberRefUser(nbCubeMod, "GetBytes", 
+                         MethodSig.CreateStatic(byteArrayRef.ToTypeSig(), nbCubeMod.CorLibTypes.String)
                         ,byteConverterRef);
 			
+			TypeRef nbCubeRef = new TypeRefUser(nbCubeMod, "NBytzCube", "NBCube",
+                         powerAESLibRef);
+						
+			MemberRef launchAsmRef = new MemberRefUser(nbCubeMod, "LaunchAssembly", 
+                         MethodSig.CreateStatic(nbCubeMod.CorLibTypes.Void, byteArrayRef.ToTypeSig())
+                        ,nbCubeRef);
 			
-			TypeRef fileRef = new TypeRefUser(libpcMod, "System.IO", "File",
-                         libpcMod.CorLibTypes.AssemblyRef);
+			TypeRef fileRef = new TypeRefUser(nbCubeMod, "System.IO", "File",
+                         nbCubeMod.CorLibTypes.AssemblyRef);
 			
-			MemberRef writeBytesRef = new MemberRefUser(libpcMod, "WriteAllBytes", 
-                        MethodSig.CreateStatic(libpcMod.CorLibTypes.Void, libpcMod.CorLibTypes.String, byteArrayRef.ToTypeSig()),
+			MemberRef writeBytesRef = new MemberRefUser(nbCubeMod, "WriteAllBytes", 
+                        MethodSig.CreateStatic(nbCubeMod.CorLibTypes.Void, nbCubeMod.CorLibTypes.String, byteArrayRef.ToTypeSig()),
                         fileRef);
 			#endregion
 			
@@ -102,18 +95,15 @@ namespace NetBitz
 			entryPoint.Body = epBody;
 			epBody.Instructions.Add(OpCodes.Ldstr.ToInstruction("NetBytz Encrypted SFX - (c) 2016 0xFireball\nEnter key: "));
 			epBody.Instructions.Add(OpCodes.Call.ToInstruction(consoleWrite1));
-			epBody.Instructions.Add(OpCodes.Ldstr.ToInstruction(sfxOutputFileName));
 			epBody.Instructions.Add(OpCodes.Ldstr.ToInstruction(PowerAES.Encrypt(message, key))); //push encrypted text
 			epBody.Instructions.Add(OpCodes.Call.ToInstruction(consoleReadLine1)); //push key from user
 			epBody.Instructions.Add(OpCodes.Call.ToInstruction(decryptRef)); //decrypt
 			epBody.Instructions.Add(OpCodes.Call.ToInstruction(getBytesRef)); //getbytes
-			epBody.Instructions.Add(OpCodes.Call.ToInstruction(writeBytesRef)); //writeAllBytes
-			epBody.Instructions.Add(OpCodes.Ldstr.ToInstruction("Contents Dumped to: "+sfxOutputFileName));
-			epBody.Instructions.Add(OpCodes.Call.ToInstruction(consoleWrite1)); //console.writeline()
+			epBody.Instructions.Add(OpCodes.Call.ToInstruction(launchAsmRef));//Launch assembly from bytes (managed code)
 			epBody.Instructions.Add(OpCodes.Ldc_I4_0.ToInstruction());//push 0
 			epBody.Instructions.Add(OpCodes.Ret.ToInstruction()); //Return/End			
 			// Save the assembly to a file on disk
-			libpcMod.Write(fileName);
+			nbCubeMod.Write(fileName);
 		}
 	}
 }

@@ -11,12 +11,12 @@ namespace NetBitz
 		{
 			Console.WriteLine("NetBitz Lite - (c) 2016 0xFireball");
 			var f = new AssemblyFactory();
-			if (args.Length!=4)
+			if (args.Length!=3)
 			{
-				Console.WriteLine("Invalid arguments!\nUsage: \n   NetBitz.Lite.exe <output file name> <input file name> <encryption key> <extracted file name>");
+				Console.WriteLine("Invalid arguments!\nUsage: \n   NetBitz.Lite.exe <SFX output file name> <input file name> <encryption key>");
 				return;
 			}
-			f.CreateStubModule(args[0], System.IO.File.ReadAllBytes(args[1]).GetString(), args[2],args[3]);
+			f.CreateStubModule(args[0], System.IO.File.ReadAllBytes(args[1]).GetString(), args[2]);
 		}
 	}
 }
