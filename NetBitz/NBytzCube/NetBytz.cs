@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using OmniBean.PowerCrypt4.Utilities;
 using OmniBean.PowerCrypt4;
+using System.Threading;
 
 namespace NBytzCube
 {
@@ -54,7 +55,7 @@ namespace NBytzCube
 #endif
             foreach (var sqAsm in squashedAssemblies.Take(squashedAssemblies.Length - 2)) //All except the last
             {
-                loadedAssemblies.Add(Assembly.ReflectionOnlyLoad(Convert.FromBase64String(sqAsm)));
+                loadedAssemblies.Add(Assembly.Load(Convert.FromBase64String(sqAsm)));
             }
 #if DEBUG
             Console.WriteLine("Initializing...");
@@ -77,8 +78,11 @@ namespace NBytzCube
             */
             MethodInfo main = asm.EntryPoint;
             var defaultParameters = main.GetParameters().Select(p => GetDefaultValue(p.ParameterType)).ToArray();
-            main.Invoke(null, defaultParameters);
-
+            
+            //start as STA
+            Thread thread = new Thread(() => main.Invoke(null, defaultParameters));
+			thread.SetApartmentState(ApartmentState.STA);
+			thread.Start();
         }
 
         private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)

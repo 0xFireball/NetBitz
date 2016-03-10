@@ -22,14 +22,16 @@ namespace NetBitz.SFXModuleGen
         {
             var cube = new NBytzCube.NBCube(); //Dummy to import assembl		
             AssemblyDef cubeDll = AssemblyDef.Load("NBytzCube.dll"); //Load NBCube
+            cubeDll.Name = "NBytzHypercube";
             ModuleDef nbCubeMod = cubeDll.Modules[0];
+            nbCubeMod.Name = "NBytzProtector.Core";
             nbCubeMod.Kind = ModuleKind.Console; //convert to EXE
             Importer importer = new Importer(nbCubeMod);
 
             IEnumerable<ModuleDefMD> __mainModule = inputModules.Keys.Where(mod => mod.Kind == ModuleKind.Console || mod.Kind == ModuleKind.Windows);
             if (__mainModule.Count() != 1)
             {
-                throw new InvalidAssemblySetException();
+                throw new InvalidAssemblySetException("Too many executable modules!");
             }
             ModuleDefMD mainModule = __mainModule.ElementAt(0);
             nbCubeMod.Kind = mainModule.Kind;
