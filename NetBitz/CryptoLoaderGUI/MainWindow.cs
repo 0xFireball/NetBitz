@@ -19,7 +19,7 @@ namespace NetBitz
 {
     public partial class MainWindow : MetroForm
     {
-    	List<string> encFiles = new List<string>();
+        List<string> encFiles = new List<string>();
         string key;
         public MainWindow()
         {
@@ -50,9 +50,9 @@ namespace NetBitz
 
         private async void button1_Click(object sender, EventArgs e)
         {
-        	label3.Text = "Initializing...";
-        	GenerateCLFile();
-        	label3.Text = "Done.";
+            label3.Text = "Initializing...";
+            GenerateCLFile();
+            label3.Text = "Done.";
         }
         void SetStatus(string format, params object[] args)
         {
@@ -61,32 +61,34 @@ namespace NetBitz
 
         public async void GenerateCLFile()
         {
-        	string fn = "";
-        	var sfd = new SaveFileDialog(){
-            	DefaultExt = "exe",
-            	AddExtension = true,
-            	Title = "Save Packed File",
-            	Filter = "Executable Files (.exe)|*.*",
+            string fn = "";
+            var sfd = new SaveFileDialog()
+            {
+                DefaultExt = "exe",
+                AddExtension = true,
+                Title = "Save Packed File",
+                Filter = "Executable Files (.exe)|*.*",
             };
             if (sfd.ShowDialog() == DialogResult.OK)
             {
-            	fn = sfd.FileName;
+                fn = sfd.FileName;
             }
-        	if (encFiles.Count == 0)
-        	{
-        		MessageBox.Show("Please select an input file.");
-        		return;
-        	}
-        	await Task.Run(() => {
-	            SetStatus("NetBitz v1.0.4");
-	            SetStatus("Generating application...");
-	            var f = new AssemblyFactory();
-	            MemoryStream ms = f.CreateSFXModuleEx(encFiles);
-	            SetStatus("Generation completed.");
-	            using (var fs = File.Create(sfd.FileName))
-	        	{
-	            	ms.WriteTo(fs);
-	        	}
+            if (encFiles.Count == 0)
+            {
+                MessageBox.Show("Please select an input file.");
+                return;
+            }
+            await Task.Run(() =>
+            {
+                SetStatus("NetBitz v1.0.4");
+                SetStatus("Generating application...");
+                var f = new AssemblyFactory();
+                MemoryStream ms = f.CreateSFXModuleEx(encFiles);
+                SetStatus("Generation completed.");
+                using (var fs = File.Create(sfd.FileName))
+                {
+                    ms.WriteTo(fs);
+                }
             });
         }
         bool encryptApp = false;
@@ -94,24 +96,24 @@ namespace NetBitz
         {
             encryptApp = checkBox1.Checked;
         }
-		void Button2Click(object sender, EventArgs e)
-		{
-			textBox1.Text = PowerAES.GenerateRandomString(32);
-		}
-		void MainWindowLoad(object sender, EventArgs e)
-		{
-	
-		}
-		void ListBox1Click(object sender, EventArgs e)
-		{
-			OpenFileDialog ofd = new OpenFileDialog()
-			{
-				Multiselect = true,
-				Title = "Add Files",
-            	Filter = ".NET Assemblies (*.exe,*.dll)|*.exe;*.dll",
-			};
+        void Button2Click(object sender, EventArgs e)
+        {
+            textBox1.Text = PowerAES.GenerateRandomString(32);
+        }
+        void MainWindowLoad(object sender, EventArgs e)
+        {
+
+        }
+        void ListBox1Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog()
+            {
+                Multiselect = true,
+                Title = "Add Files",
+                Filter = ".NET Assemblies (*.exe,*.dll)|*.exe;*.dll",
+            };
             var dr = ofd.ShowDialog();
-            if (dr==DialogResult.OK)
+            if (dr == DialogResult.OK)
             {
                 foreach (string fileName in ofd.FileNames)
                 {
@@ -119,12 +121,12 @@ namespace NetBitz
                 }
             }
             RefreshList();
-		}
-		void RefreshList()
+        }
+        void RefreshList()
         {
             listBox1.Items.Clear();
-            if (encFiles==null)
-            	encFiles = new List<string>();
+            if (encFiles == null)
+                encFiles = new List<string>();
             foreach (string fn in encFiles)
             {
                 string it = Path.GetFileName(fn);
@@ -132,9 +134,15 @@ namespace NetBitz
                 //comboBox1.Items.Add(it);
             }
         }
-		void ComboBox1SelectedIndexChanged(object sender, EventArgs e)
-		{
-	
-		}
+        void ComboBox1SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            encFiles = new List<string>();
+            RefreshList();
+        }
     }
 }
