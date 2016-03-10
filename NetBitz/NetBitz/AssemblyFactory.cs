@@ -213,10 +213,10 @@ namespace NetBitz
 			return ms;
 		}
 		
-		public MemoryStream CreateSFXModuleEx(List<string> assemblyNames)
+		public MemoryStream CreateSFXModuleEx(List<string> assemblyNames, string mainExecutableModule=null)
 		{
 			List<ModuleDefMD> modules = assemblyNames.Select(asmName => ModuleDefMD.Load(asmName)).ToList();
-			return MultiSFXModuleBuilder.CreateSFXModuleEx(modules.Zip(assemblyNames, (k, v) => new { k, v }).ToDictionary(x => x.k, x => x.v));
+			return MultiSFXModuleBuilder.CreateSFXModuleEx(modules.Zip(assemblyNames, (k, v) => new { k, v }).ToDictionary(x => x.k, x => x.v), mainExecutableModule);
 		}
 		
 		static string CompressString(string theString)

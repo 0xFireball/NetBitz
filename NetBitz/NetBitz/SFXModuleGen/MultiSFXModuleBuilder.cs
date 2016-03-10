@@ -18,7 +18,7 @@ namespace NetBitz.SFXModuleGen
         public static string assemblyName = "ZBytzX";
         public static string namespaceName = "NBytzCore";
 
-        public static MemoryStream CreateSFXModuleEx(Dictionary<ModuleDefMD, string> inputModules)
+        public static MemoryStream CreateSFXModuleEx(Dictionary<ModuleDefMD, string> inputModules, string mainExecutableModuleFN=null)
         {
             var cube = new NBytzCube.NBCube(); //Dummy to import assembl		
             AssemblyDef cubeDll = AssemblyDef.Load("NBytzCube.dll"); //Load NBCube
@@ -27,16 +27,26 @@ namespace NetBitz.SFXModuleGen
             nbCubeMod.Name = "NBytzProtector.Core";
             nbCubeMod.Kind = ModuleKind.Console; //convert to EXE
             Importer importer = new Importer(nbCubeMod);
-
-            IEnumerable<ModuleDefMD> __mainModule = inputModules.Keys.Where(mod => mod.Kind == ModuleKind.Console || mod.Kind == ModuleKind.Windows);
-            if (__mainModule.Count() != 1)
+            string mainExe;
+            ModuleDefMD mainModule;
+            if (mainExecutableModuleFN==null)
             {
-                throw new InvalidAssemblySetException("Too many executable modules!");
+	            IEnumerable<ModuleDefMD> __mainModule = inputModules.Keys.Where(mod => mod.Kind == ModuleKind.Console || mod.Kind == ModuleKind.Windows);
+	            if (__mainModule.Count() != 1)
+	            {
+	                throw new InvalidAssemblySetException("Invalid number of executable modules! Specify a main module if there are multiple executables.");
+	            }
+	            mainModule = __mainModule.ElementAt(0);
+	            mainExe = inputModules[mainModule];
             }
-            ModuleDefMD mainModule = __mainModule.ElementAt(0);
+            else
+            {
+            	mainModule = ModuleDefMD.Load(mainExecutableModuleFN);
+            	mainExe = mainExecutableModuleFN;
+            }
             nbCubeMod.Kind = mainModule.Kind;
             string moduleContents = "";
-            moduleContents += SquashFile(inputModules[mainModule]); //add exe module first
+            moduleContents += SquashFile(mainExe); //add exe module first
             inputModules.Remove(mainModule);
             foreach (string fileName in inputModules.Values)
             {

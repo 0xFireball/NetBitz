@@ -20,6 +20,7 @@ namespace NetBitz
     public partial class MainWindow : MetroForm
     {
         List<string> encFiles = new List<string>();
+        string mainExecutable = "";
         string key;
         public MainWindow()
         {
@@ -78,12 +79,14 @@ namespace NetBitz
                 MessageBox.Show("Please select an input file.");
                 return;
             }
+            if (mainExecutable == "")
+        		mainExecutable = encFiles[0];
             await Task.Run(() =>
             {
                 SetStatus("NetBitz v1.0.4");
                 SetStatus("Generating application...");
                 var f = new AssemblyFactory();
-                MemoryStream ms = f.CreateSFXModuleEx(encFiles);
+                MemoryStream ms = f.CreateSFXModuleEx(encFiles, mainExecutable);
                 SetStatus("Generation completed.");
                 using (var fs = File.Create(sfd.FileName))
                 {
@@ -125,18 +128,19 @@ namespace NetBitz
         void RefreshList()
         {
             listBox1.Items.Clear();
+            comboBox1.Items.Clear();
             if (encFiles == null)
                 encFiles = new List<string>();
             foreach (string fn in encFiles)
             {
                 string it = Path.GetFileName(fn);
                 listBox1.Items.Add(it);
-                //comboBox1.Items.Add(it);
+                comboBox1.Items.Add(it);
             }
         }
         void ComboBox1SelectedIndexChanged(object sender, EventArgs e)
         {
-
+        	mainExecutable = comboBox1.Text;
         }
 
         private void button3_Click(object sender, EventArgs e)
