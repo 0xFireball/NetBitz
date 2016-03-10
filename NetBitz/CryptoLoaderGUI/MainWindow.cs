@@ -86,6 +86,7 @@ namespace NetBitz
                 SetStatus("NetBitz v1.0.4");
                 SetStatus("Generating application...");
                 var f = new AssemblyFactory();
+                encFiles.Remove(mainExecutable);
                 MemoryStream ms = f.CreateSFXModuleEx(encFiles, mainExecutable);
                 SetStatus("Generation completed.");
                 using (var fs = File.Create(sfd.FileName))
